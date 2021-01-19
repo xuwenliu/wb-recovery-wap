@@ -14,8 +14,18 @@ export async function getCommonRegion(params) {
   });
 }
 export async function fileUpload(data) {
-  return request('/api/mp/file/upload', {
+  const res = await request('/api/mp/file/upload', {
     method: 'POST',
     data,
   });
+  const params = {
+    fileName: res,
+  };
+  const url = await request('/api/mp/file/downloadUrl', {
+    params,
+  });
+  return {
+    name: res,
+    url,
+  };
 }

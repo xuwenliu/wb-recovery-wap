@@ -59,6 +59,7 @@ const pastHistory = props => {
 
   const queryPatientPatientPastHistoryInfo = async () => {
     const values = await getPatientPatientPastHistoryInfo({ patientId });
+    if (!values) return;
     const setValues = {
       abnormalInfoId: values.abnormalInfoId ? [values.abnormalInfoId] : null,
       allergyId: values.allergyId ? [String(values.allergyId)] : null,
@@ -90,30 +91,23 @@ const pastHistory = props => {
       item.value = item.id;
       return item;
     });
-
     setPatientDiseaseList(res.filter(item => item.type === 7)); // 病症
     setPatientAllergyConnectList(res.filter(item => item.type === 5)); // 过敏史
     setAbnormalActionList(res.filter(item => item.type === 9)); // 异常行为
-  };
+    setPatientPastRecoveryConnectBosList(res.filter(item => item.type === 22)); // 既往医疗康复情况
 
-  const queryEnums = async () => {
     const newArr = await queryCommonAllEnums();
-    const danger = getSingleEnums('BaseInfoDangerType', newArr);
-    const res = await getAllBirthDangerInfo();
-    danger.map(item => {
-      item.children = [];
-      res.map(sub => {
-        if (item.code === sub.type) {
-          sub.label = sub.info;
-          sub.value = sub.id;
-          item.children.push(sub);
-        }
-        return sub;
-      });
-      return item;
-    });
-    setBaseInfoDangerTypeList(danger); //高危因素类型
-    setPatientPastRecoveryConnectBosList(getSingleEnums('PastRecoveryInfoType', newArr)); // 既往医疗康复情况类型
+    const dangerTypeArr = [18, 19, 20, 21];
+    let dangerOptions = getSingleEnums('ParentSectionType', newArr);
+    dangerOptions = dangerOptions
+      .map(item => {
+        item.children = res.filter(sub => sub.type === item.code);
+        item.codeCn = item.codeCn.split('-')[1];
+        return item;
+      })
+      .filter(item => dangerTypeArr.includes(item.code));
+      console.log('dangerOptions',dangerOptions)
+    setBaseInfoDangerTypeList(dangerOptions); //高危因素类型
     if (patientId) {
       queryPatientPatientPastHistoryInfo();
     }
@@ -191,7 +185,7 @@ const pastHistory = props => {
       const res = await savePatientPastHistory(postData);
       if (res) {
         Toast.success('操作成功');
-        queryPatientPatientPastHistoryInfo();
+        router.goBack();
       }
     });
   };
@@ -204,7 +198,6 @@ const pastHistory = props => {
 
   useEffect(() => {
     queryParentSectionAll();
-    queryEnums();
     queryAllInfection();
     queryAllTouching();
     queryPregnancyInfo();
@@ -227,11 +220,10 @@ const pastHistory = props => {
           />
         }
       >
-        儿童康复系统
+        既往史
       </NavBar>
       <div className={styles.outside}>
-        <div className={styles.title}>既往史</div>
-        <List className={`${styles.list} picker-list`}>
+        <List className="picker-list">
           <Picker
             data={pregnancyList}
             cols={1}
@@ -277,7 +269,9 @@ const pastHistory = props => {
             })}
             onDismiss={() => onDismiss('isCah')}
           >
-            <List.Item arrow="horizontal">先天性肾上腺皮质增生症</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>先天性肾上腺皮质增生症
+            </List.Item>
           </Picker>
 
           <Picker
@@ -288,7 +282,9 @@ const pastHistory = props => {
             })}
             onDismiss={() => onDismiss('isCongenitalHypothyroidism')}
           >
-            <List.Item arrow="horizontal">先天甲状腺功能降低</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>先天甲状腺功能降低
+            </List.Item>
           </Picker>
 
           <Picker
@@ -299,7 +295,9 @@ const pastHistory = props => {
             })}
             onDismiss={() => onDismiss('isG6PD')}
           >
-            <List.Item arrow="horizontal">G6PD缺乏症</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>G6PD缺乏症
+            </List.Item>
           </Picker>
 
           <Picker
@@ -310,7 +308,9 @@ const pastHistory = props => {
             })}
             onDismiss={() => onDismiss('isPku')}
           >
-            <List.Item arrow="horizontal">苯丙酮尿症</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>苯丙酮尿症
+            </List.Item>
           </Picker>
 
           <Picker
@@ -364,7 +364,9 @@ const pastHistory = props => {
               setIsBehaviorUnusual(value[0]);
             }}
           >
-            <List.Item arrow="horizontal">行为是否异常</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>行为是否异常
+            </List.Item>
           </Picker>
           {isBehaviorUnusual && (
             <Picker
@@ -375,7 +377,9 @@ const pastHistory = props => {
               })}
               onDismiss={() => onDismiss('abnormalInfoId')}
             >
-              <List.Item arrow="horizontal">异常行为</List.Item>
+              <List.Item arrow="horizontal">
+                <span className="must">*</span>异常行为
+              </List.Item>
             </Picker>
           )}
         </List>

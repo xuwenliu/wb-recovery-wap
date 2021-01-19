@@ -3,7 +3,6 @@ import { Toast, Modal } from 'antd-mobile';
 import initWx from '@/utils/wx';
 import debug from '@/utils/debug';
 import './global.less';
-import { getUrlCode } from '@/utils/utils';
 import { getAuthUrl } from '@/services/api.tsx';
 
 function isWx() {
@@ -14,9 +13,9 @@ function isWx() {
 if (isWx()) {
   if (!localStorage.getItem('openId')) {
     // 获取code的跳转url
-    // getAuthUrl().then(res => {
-    //   location.href = res;
-    // });
+    getAuthUrl().then(res => {
+      location.href = res;
+    });
   }
 }
 

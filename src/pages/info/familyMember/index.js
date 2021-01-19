@@ -153,8 +153,16 @@ const familyMember = props => {
         return;
       }
       console.log(values);
+      // 修改时用id
+      let id = null;
+      memberList.forEach(item => {
+        if (item.type === type) {
+          id = item.id;
+        }
+      });
       // 验证通过
       const postData = {
+        id,
         birthYear: new Date(values.birthYear).getFullYear(),
         educationDegreeId: values.educationDegreeId[0],
         mainCarefulId: values.mainCarefulId ? values.mainCarefulId[0] : null,
@@ -296,12 +304,10 @@ const familyMember = props => {
           />
         }
       >
-        儿童康复系统
+        家庭成员
       </NavBar>
 
       <div className={styles.outside}>
-        <div className={styles.title}>家庭成员</div>
-
         {!showEdit && (
           <>
             {memberList.map(item => {
@@ -319,8 +325,7 @@ const familyMember = props => {
                   <div className={styles.right}>
                     <div>姓名：{item.name}</div>
                     <div>
-                      职业：{item.professionLargeName}-{item.professionMediumName}-
-                      {item.professionSmallName}
+                      职业：{item.professionLargeName}-{item.professionMediumName}
                     </div>
                     <div>文化程度：{item.educationDegreeName}</div>
                     <div>
@@ -383,7 +388,7 @@ const familyMember = props => {
 
             <Picker
               data={professionList}
-              cols={3}
+              cols={2}
               {...getFieldProps('profession', {
                 rules: [{ required: true, message: '请选择职业' }],
               })}

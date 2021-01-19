@@ -27,7 +27,7 @@ export default function Video() {
           />
         }
       >
-        儿童康复系统
+        特殊儿童康复定点机构管理系统
       </NavBar>
 
       <div className={styles.outside}>

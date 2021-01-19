@@ -27,7 +27,6 @@ export default props => {
     }
   };
   useEffect(() => {
-    console.log(2);
     if (!token) {
       queryUserInfo();
     }
@@ -40,7 +39,6 @@ export default props => {
     >
       <Route
         render={() => {
-          console.log(1);
           if (token) {
             if (token.isNeedBind) {
               return <Redirect to={`/user/login`} />;

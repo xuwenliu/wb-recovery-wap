@@ -7,6 +7,13 @@ export async function getParentSectionAll(params) {
   });
 }
 
+// 医学检查栏位
+export async function getCheckAll(params) {
+  return request('/api/mp/section/check/all', {
+    params,
+  });
+}
+
 // 所有疫苗
 export async function getAllVaccine() {
   return request('/api/mp/birthDanger/allVaccine');

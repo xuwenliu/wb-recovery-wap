@@ -7,18 +7,17 @@ import styles from './index.less';
 import home from '@/assets/img/home.png';
 import router from 'umi/router';
 
-import { getParentSectionAll, getAllVaccine } from '@/pages/info/service';
+import { getParentSectionAll, getCheckAll, getAllVaccine } from '@/pages/info/service';
 import { getCommonRegion } from '@/services/common';
-import { queryCommonAllEnums, getSingleEnums } from '@/utils/utils';
 import { savePersonHistory, getPatientPersonHistoryInfo } from '../service';
 const isFeverList = [
   {
-    label: '是',
-    value: true,
-  },
-  {
     label: '否',
     value: false,
+  },
+  {
+    label: '是',
+    value: true,
   },
 ];
 const personalHistory = props => {
@@ -34,23 +33,11 @@ const personalHistory = props => {
 
   const queryPatientPersonHistoryInfo = async () => {
     const values = await getPatientPersonHistoryInfo({ patientId });
-    const setValues = {
-      caTalkTimeId: [values.caTalkTimeId],
-      canClimbTimeId: [values.caTalkTimeId],
-      canGainGroundTimeId: [values.canGainGroundTimeId],
-      canLaughTimeId: [values.canLaughTimeId],
-      canSitTimeId: [values.canSitTimeId],
-      canTurnOverTimeId: [values.canTurnOverTimeId],
-      canWalkTimeId: [values.canWalkTimeId],
-      familyDiseaseHistoryId: [values.familyDiseaseHistoryId],
-      familyInfectiousDiseaseType: [values.familyInfectiousDiseaseType],
-      familyInfoType: [values.familyInfoType],
-      isFever: [values.isFever],
-      supportTypeId: [values.supportTypeId],
-      vaccineId: [values.vaccineId],
-      patientId,
-    };
-    setFieldsValue(setValues);
+    if (!values) return;
+    for (let i in values) {
+      values[i] = values[i] ? [values[i]] : null;
+    }
+    setFieldsValue(values);
   };
 
   // 获取下拉信息
@@ -69,10 +56,17 @@ const personalHistory = props => {
     }
   };
 
-  const queryEnums = async () => {
-    const newArr = await queryCommonAllEnums();
-    setFamilyInfectiousDiseaseList(getSingleEnums('FamilyInfectiousDiseaseType', newArr)); //传染病
-    setFamilyHistoryList(getSingleEnums('FamilyInfoType', newArr)); // 家族史
+  const queryCheckAll = async () => {
+    let res = await getCheckAll();
+    res = res.map(item => {
+      item.label = item.content;
+      item.value = item.id;
+      return item;
+    });
+
+    setAllVaccineList(res.filter(item => item.type === 10)); // 疫苗接种
+    setFamilyHistoryList(res.filter(item => item.type === 11)); // 家族史
+    setFamilyInfectiousDiseaseList(res.filter(item => item.type === 12)); // 家族传染病
   };
 
   // 所有疫苗
@@ -89,27 +83,18 @@ const personalHistory = props => {
   const onFinish = () => {
     validateFields(async (error, values) => {
       console.log(values);
+      for (let i in values) {
+        values[i] = values[i] ? values[i][0] : null;
+      }
       // 验证通过
       const postData = {
-        caTalkTimeId: values.caTalkTimeId[0],
-        canClimbTimeId: values.caTalkTimeId[0],
-        canGainGroundTimeId: values.canGainGroundTimeId[0],
-        canLaughTimeId: values.canLaughTimeId[0],
-        canSitTimeId: values.canSitTimeId[0],
-        canTurnOverTimeId: values.canTurnOverTimeId[0],
-        canWalkTimeId: values.canWalkTimeId[0],
-        familyDiseaseHistoryId: values.familyDiseaseHistoryId[0],
-        familyInfectiousDiseaseType: values.familyInfectiousDiseaseType[0],
-        familyInfoType: values.familyInfoType[0],
-        isFever: values.isFever[0],
-        supportTypeId: values.supportTypeId[0],
-        vaccineId: values.vaccineId[0],
+        ...values,
         patientId,
       };
       const res = await savePersonHistory(postData);
       if (res) {
         Toast.success('操作成功');
-        queryPatientPersonHistoryInfo();
+        router.goBack();
       }
     });
   };
@@ -122,7 +107,7 @@ const personalHistory = props => {
 
   useEffect(() => {
     queryParentSectionAll();
-    queryEnums();
+    queryCheckAll();
     queryAllVaccine();
     setFieldsValue({
       createDocumentTime: new Date(),
@@ -146,11 +131,10 @@ const personalHistory = props => {
           />
         }
       >
-        儿童康复系统
+        个人史
       </NavBar>
       <div className={styles.outside}>
-        <div className={styles.title}>个人史</div>
-        <List className={`${styles.list} picker-list`}>
+        <List className="picker-list">
           <Picker
             data={supportTypeList}
             cols={1}

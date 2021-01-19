@@ -82,6 +82,7 @@ const Info = ({ location, form }) => {
       name: '',
       gender: null,
     });
+    setFiles([]);
   };
   const handleBack = () => {
     if (patientId) {
@@ -148,13 +149,14 @@ const Info = ({ location, form }) => {
       const res = await fileUpload(formData);
       if (res) {
         files = files.map(item => {
-          item.url = res;
+          item.url = res.url;
+          item.name = res.name;
           item.id = +new Date();
           return item;
         });
         setFiles(files);
       } else {
-        Toast.error('上传失败');
+        Toast.fail('上传失败');
       }
     }
     if (operationType === 'remove') {
@@ -179,7 +181,7 @@ const Info = ({ location, form }) => {
           />
         }
       >
-        儿童康复系统
+        基本信息
       </NavBar>
       <div className={styles.outside}>
         {!showAdd && (
@@ -220,7 +222,7 @@ const Info = ({ location, form }) => {
               })}
               placeholder="请输入姓名"
             >
-              姓名
+              <span className="must">*</span>姓名
             </InputItem>
             <Picker
               data={genderTypeList}
@@ -230,10 +232,12 @@ const Info = ({ location, form }) => {
               })}
               onDismiss={() => onDismiss('gender')}
             >
-              <List.Item arrow="horizontal">性别</List.Item>
+              <List.Item arrow="horizontal">
+                <span className="must">*</span>性别
+              </List.Item>
             </Picker>
             <List.Item>
-              头像
+              <span className="must">*</span>头像
               <ImagePicker
                 length={1}
                 files={files}

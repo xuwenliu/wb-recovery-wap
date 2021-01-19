@@ -4,6 +4,9 @@ import { IconButton } from '@material-ui/core';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import router from 'umi/router';
 import setting from '../../../config/defaultSettings';
+import home from '@/assets/img/home.png';
+
+import { NavBar, Icon } from 'antd-mobile';
 
 const useStyles = makeStyles({
   backstyle: {
@@ -65,13 +68,43 @@ class Page extends PureComponent {
   render() {
     const { children, returnUrl, onClick, onLoadType = false, backIcon = true } = this.props;
     return (
-      <Header
+      <NavBar
+        className="nav-bar"
+        mode="light"
+        icon={<Icon type="left" />}
+        onLeftClick={() => {
+          if (onClick) {
+            onClick();
+          } else {
+            if (returnUrl) {
+              router.push(returnUrl);
+            } else {
+              router.goBack();
+            }
+          }
+        }}
+        rightContent={
+          <img
+            onClick={() => {
+              router.replace('/');
+            }}
+            className="home-icon"
+            src={home}
+          />
+        }
+      >
+        {children}
+      </NavBar>
+
+      /**
+         * <Header
         contents={children}
         returnUrl={returnUrl}
         onClick={onClick}
         onLoadType={onLoadType}
         backIcon={backIcon}
       />
+         */
     );
   }
 }

@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Picker, NavBar, List, DatePicker, InputItem, Button, Toast, Icon } from 'antd-mobile';
+import {
+  Picker,
+  NavBar,
+  List,
+  DatePicker,
+  InputItem,
+  Button,
+  Toast,
+  Icon,
+  Badge,
+} from 'antd-mobile';
 import { createForm } from 'rc-form';
 import styles from './index.less';
 import home from '@/assets/img/home.png';
@@ -28,6 +38,7 @@ const PersonalInfo = props => {
 
   const queryPatientBasicInfo = async () => {
     const values = await getPatientBasicInfo({ patientId });
+    if (!values) return;
     const setValues = {
       birthPlaceType: [values.birthPlaceType],
       birthTime: values.birthTime ? new Date(values.birthTime) : null,
@@ -112,7 +123,7 @@ const PersonalInfo = props => {
       const res = await saveBasicInfo(postData);
       if (res) {
         Toast.success('操作成功');
-        queryPatientBasicInfo();
+        router.goBack();
       }
     });
   };
@@ -148,29 +159,10 @@ const PersonalInfo = props => {
           />
         }
       >
-        儿童康复系统
+        个人信息
       </NavBar>
       <div className={styles.outside}>
-        <div className={styles.title}>个人信息</div>
-        <List className={`${styles.list} picker-list`}>
-          {/* <InputItem
-            {...getFieldProps('name', {
-              rules: [{ required: true, message: '请输入姓名' }],
-            })}
-            placeholder="请输入姓名"
-          >
-            姓名
-          </InputItem>
-          <Picker
-            data={genderTypeList}
-            cols={1}
-            {...getFieldProps('gender', {
-              rules: [{ required: true, message: '请选择性别' }],
-            })}
-            onDismiss={() => onDismiss('gender')}
-          >
-            <List.Item arrow="horizontal">性别</List.Item>
-          </Picker> */}
+        <List className="picker-list">
           <Picker
             data={ethnicList}
             cols={1}
@@ -179,7 +171,9 @@ const PersonalInfo = props => {
             })}
             onDismiss={() => onDismiss('ethnic')}
           >
-            <List.Item arrow="horizontal">民族</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>民族
+            </List.Item>
           </Picker>
           <DatePicker
             mode="date"
@@ -189,10 +183,14 @@ const PersonalInfo = props => {
             })}
             onDismiss={() => onDismiss('birthTime')}
           >
-            <List.Item arrow="horizontal">出生日期</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>出生日期
+            </List.Item>
           </DatePicker>
           <DatePicker mode="date" {...getFieldProps('createDocumentTime')}>
-            <List.Item arrow="horizontal">建档日期</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>建档日期
+            </List.Item>
           </DatePicker>
           {/* <InputItem
             type="phone"
@@ -209,7 +207,7 @@ const PersonalInfo = props => {
             })}
             placeholder="请输入身份证号码"
           >
-            身份证号码
+            <span className="must">*</span>身份证号
           </InputItem>
           <Picker
             title="请选择户籍地"
@@ -218,7 +216,9 @@ const PersonalInfo = props => {
               rules: [{ required: true, message: '请选择户籍地' }],
             })}
           >
-            <List.Item arrow="horizontal">户籍地</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>户籍地
+            </List.Item>
           </Picker>
           <InputItem
             {...getFieldProps('household', {
@@ -234,7 +234,9 @@ const PersonalInfo = props => {
               rules: [{ required: true, message: '请选择现居地' }],
             })}
           >
-            <List.Item arrow="horizontal">现居地</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>现居地
+            </List.Item>
           </Picker>
           <InputItem
             {...getFieldProps('nowPlace', {
@@ -249,7 +251,7 @@ const PersonalInfo = props => {
             })}
             placeholder="请输入邮政编码"
           >
-            邮政编码
+            <span className="must">*</span>邮政编码
           </InputItem>
           <Picker
             data={birthPlaceTypeList}
@@ -259,7 +261,9 @@ const PersonalInfo = props => {
             })}
             onDismiss={() => onDismiss('birthPlaceType')}
           >
-            <List.Item arrow="horizontal">出生地点</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>出生地点
+            </List.Item>
           </Picker>
           <Picker
             data={pregnancyWeeksList}
@@ -269,7 +273,9 @@ const PersonalInfo = props => {
             })}
             onDismiss={() => onDismiss('pregnancyWeeksId')}
           >
-            <List.Item arrow="horizontal">出生孕周</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>出生孕周
+            </List.Item>
           </Picker>
           <Picker
             data={birthWeightList}
@@ -279,7 +285,9 @@ const PersonalInfo = props => {
             })}
             onDismiss={() => onDismiss('birthWeightId')}
           >
-            <List.Item arrow="horizontal">出生体重</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>出生体重
+            </List.Item>
           </Picker>
         </List>
         <Button style={{ marginTop: 20, color: '#fff' }} type="primary" onClick={onFinish}>

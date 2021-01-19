@@ -68,16 +68,33 @@ export default {
     ios: 7,
     safari: 10,
   },
-  outputPath: './dist',
-  hash: false,
+  outputPath: './cr-mobile',
+  hash: true,
   alias: {},
   proxy: {
+    /**
+     * http://cr.ts-health.cn
+     * http://127.0.0.1:5001
+     * http://cq.guofw.cn:8080
+     */
+    '/api/scale/': {
+      target: 'http://wx.training.cr.ts-health.cn',
+      changeOrigin: true,
+    },
+    '/api/object': {
+      target: 'http://wx.training.cr.ts-health.cn',
+      changeOrigin: true,
+    },
+    '/api/open/token': {
+      target: 'http://wx.training.cr.ts-health.cn',
+      changeOrigin: true,
+    },
     '/api/': {
-      target: 'http://49.4.25.130:8080',
+      target: 'http://wx.training.cr.ts-health.cn',
       changeOrigin: true,
     },
     '/common/': {
-      target: 'http://49.4.25.130:8080',
+      target: 'http://wx.training.cr.ts-health.cn',
       changeOrigin: true,
     },
 

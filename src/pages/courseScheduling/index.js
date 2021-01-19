@@ -1,42 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, NavBar, Button, Badge, Steps, Icon } from 'antd-mobile';
 import styles from './index.less';
 import home from '@/assets/img/home.png';
 import router from 'umi/router';
-
+import { getArrangeClassInfo } from './service';
+import moment from 'moment';
 const { Step } = Steps;
+import NoData from '@/components/NoData';
+
 const now = new Date();
+
 const extra = {
-  '2017/07/15': { info: <Badge dot></Badge> },
+  // '2017/07/15': { info: <Badge dot></Badge> },
 };
-
-extra[+new Date(now.getFullYear(), now.getMonth(), now.getDate() + 5)] = {
-  info: <Badge dot></Badge>,
-};
-extra[+new Date(now.getFullYear(), now.getMonth(), now.getDate() + 6)] = {
-  info: <Badge dot></Badge>,
-};
-extra[+new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7)] = {
-  info: <Badge dot></Badge>,
-};
-extra[+new Date(now.getFullYear(), now.getMonth(), now.getDate() + 8)] = {
-  info: <Badge dot></Badge>,
-};
-
-Object.keys(extra).forEach(key => {
-  const info = extra[key];
-  const date = new Date(key);
-  if (!Number.isNaN(+date) && !extra[+date]) {
-    extra[+date] = info;
-  }
-});
+let allData = [];
 
 export default function courseScheduling() {
   const [visible, setVisible] = useState(false);
+  const patientId = localStorage.getItem('patientId');
+  const [list, setList] = useState([]);
+  const queryArrangeClassInfo = async () => {
+    const res = await getArrangeClassInfo({
+      mpPatientId: patientId,
+    });
+    if (res) {
+      allData = res;
+      res.map(item => {
+        extra[moment(item.date).format('YYYY/MM/DD')] = {
+          info: <Badge dot></Badge>,
+        };
 
+        Object.keys(extra).forEach(key => {
+          const info = extra[key];
+          const date = new Date(key);
+          if (!Number.isNaN(+date) && !extra[+date]) {
+            extra[+date] = info;
+          }
+        });
+      });
+    }
+  };
   const onConfirm = date => {
-    console.log(date);
+    const selectDateStr = moment(date).format('YYYY-MM-DD');
+    const list = allData.filter(item => item.dateStr === selectDateStr);
+    console.log(list);
     setVisible(false);
+    setList(list);
   };
   const onCancel = () => {
     setVisible(false);
@@ -45,6 +54,10 @@ export default function courseScheduling() {
   const getDateExtra = date => {
     return extra[+date];
   };
+
+  useEffect(() => {
+    queryArrangeClassInfo();
+  }, []);
 
   return (
     <>
@@ -63,10 +76,10 @@ export default function courseScheduling() {
           />
         }
       >
-        儿童康复系统
+        查看排课
       </NavBar>
       <div className={styles.outside}>
-        <div className={styles.title}>查看排课</div>
+        {/* <div className={styles.title}>查看排课</div> */}
         <Button
           onClick={() => {
             setVisible(true);
@@ -79,7 +92,7 @@ export default function courseScheduling() {
         <Calendar
           className="calendar"
           type="one"
-          defaultDate={new Date(+now - 5184000000)}
+          defaultDate={now}
           minDate={new Date(+now - 5184000000)}
           visible={visible}
           onConfirm={onConfirm}
@@ -88,46 +101,28 @@ export default function courseScheduling() {
         />
 
         <div className={styles.title}>课程详情</div>
+        {list.length === 0 && <NoData />}
 
-        <div className={styles.noContent}>暂无课程内容</div>
-        <Steps size="small" current={3}>
-          <Step
-            icon={<div className={styles.circle}></div>}
-            title="2020-11-11"
-            description={
-              <ul className={styles.content}>
-                <li>课程名称：运动治疗师</li>
-                <li>治疗师：小王老师</li>
-                <li>患者：吴子健</li>
-                <li>教室：3楼A001室</li>
-              </ul>
-            }
-          />
-          <Step
-            icon={<div className={styles.circle}></div>}
-            title="2020-11-12"
-            description={
-              <ul className={styles.content}>
-                <li>课程名称：运动治疗师</li>
-                <li>治疗师：小王老师</li>
-                <li>患者：吴子健</li>
-                <li>教室：3楼A001室</li>
-              </ul>
-            }
-          />
-          <Step
-            icon={<div className={styles.circle}></div>}
-            title="2020-11-13"
-            description={
-              <ul className={styles.content}>
-                <li>课程名称：运动治疗师</li>
-                <li>治疗师：小王老师</li>
-                <li>患者：吴子健</li>
-                <li>教室：3楼A001室</li>
-              </ul>
-            }
-          />
-        </Steps>
+        {list.length !== 0 && (
+          <Steps size="small" current={3}>
+            {list.map(item => (
+              <Step
+                key={item.id}
+                icon={<div className={styles.circle}></div>}
+                title={`${item.dateStr} ${item.timeName}`}
+                description={
+                  <ul className={styles.content}>
+                    <li>课程名称：{item.className}</li>
+                    <li>治疗师：{item.employeeName}</li>
+                    <li>患者：{item.patientName}</li>
+                    <li>教室：{item.siteName}</li>
+                  </ul>
+                }
+              />
+            ))}
+
+          </Steps>
+        )}
       </div>
     </>
   );

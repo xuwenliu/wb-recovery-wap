@@ -233,6 +233,7 @@ export const queryCommonAllEnums = async () => {
 };
 // 从所有枚举里面获取type类型的枚举
 export const getSingleEnums = (key, all) => {
+  console.log('key',key);
   return all
     .filter(item => item.key === key)
     .map(item => item.value)[0]
@@ -244,15 +245,3 @@ export const getSingleEnums = (key, all) => {
     });
 };
 
-export const getUrlCode = () => {
-  var url = location.search; //获取url中"?"符后的字符串
-  var theRequest = new Object();
-  if (url.indexOf('?') != -1) {
-    var str = url.substr(1);
-    var strs = str.split('&');
-    for (var i = 0; i < strs.length; i++) {
-      theRequest[strs[i].split('=')[0]] = strs[i].split('=')[1];
-    }
-  }
-  return theRequest;
-};

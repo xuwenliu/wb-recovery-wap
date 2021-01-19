@@ -35,6 +35,13 @@ const routes = [
     _title_default: '甜鼠健康',
   },
   {
+    path: '/scale',
+    redirect: '/scale/quick',
+    exact: true,
+    _title: '甜鼠健康',
+    _title_default: '甜鼠健康',
+  },
+  {
     path: '/',
     Routes: [require('../Authorized').default],
     redirect: '/home/index',
@@ -167,6 +174,38 @@ const routes = [
         _title_default: '甜鼠健康',
       },
       {
+        path: '/home/punchCard',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              component: () =>
+                import(/* webpackChunkName: "p__punchCard__index" */ '../punchCard/index'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../punchCard/index').default,
+        title: '训练打卡',
+        exact: true,
+        Routes: [require('./TitleWrapper.jsx').default],
+        _title: '训练打卡',
+        _title_default: '甜鼠健康',
+      },
+      {
+        path: '/home/punchCard/list',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              component: () =>
+                import(/* webpackChunkName: "p__punchCard__list__index" */ '../punchCard/list/index'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../punchCard/list/index').default,
+        title: '打卡记录',
+        exact: true,
+        Routes: [require('./TitleWrapper.jsx').default],
+        _title: '打卡记录',
+        _title_default: '甜鼠健康',
+      },
+      {
         path: '/home/video',
         component: __IS_BROWSER
           ? _dvaDynamic({
@@ -196,6 +235,38 @@ const routes = [
         exact: true,
         Routes: [require('./TitleWrapper.jsx').default],
         _title: '查看排课',
+        _title_default: '甜鼠健康',
+      },
+      {
+        path: '/home/visitingRecord',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              component: () =>
+                import(/* webpackChunkName: "p__visitingRecord__index" */ '../visitingRecord/index'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../visitingRecord/index').default,
+        title: '就诊记录',
+        exact: true,
+        Routes: [require('./TitleWrapper.jsx').default],
+        _title: '就诊记录',
+        _title_default: '甜鼠健康',
+      },
+      {
+        path: '/home/chart',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              component: () =>
+                import(/* webpackChunkName: "p__chart__index" */ '../chart/index'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../chart/index').default,
+        title: '体格检查曲线图',
+        exact: true,
+        Routes: [require('./TitleWrapper.jsx').default],
+        _title: '体格检查曲线图',
         _title_default: '甜鼠健康',
       },
       {
@@ -318,6 +389,147 @@ const routes = [
         exact: true,
         Routes: [require('./TitleWrapper.jsx').default],
         _title: '家庭成员',
+        _title_default: '甜鼠健康',
+      },
+      {
+        component: () =>
+          React.createElement(
+            require('/Users/xwl/Desktop/order/cr-mobile/node_modules/umi-build-dev/lib/plugins/404/NotFound.js')
+              .default,
+            { pagesPath: 'src/pages', hasRoutesInConfig: true },
+          ),
+        _title: '甜鼠健康',
+        _title_default: '甜鼠健康',
+      },
+    ],
+    _title: '甜鼠健康',
+    _title_default: '甜鼠健康',
+  },
+  {
+    path: '/scale',
+    Routes: [require('../ScaleAuthorized').default],
+    component: __IS_BROWSER
+      ? _dvaDynamic({
+          component: () =>
+            import(/* webpackChunkName: "layouts__BasicLayout" */ '../../layouts/BasicLayout'),
+          LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+            .default,
+        })
+      : require('../../layouts/BasicLayout').default,
+    routes: [
+      {
+        path: '/scale/quick',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              app: require('@tmp/dva').getApp(),
+              models: () => [
+                import(/* webpackChunkName: 'p__scale__quick__model.js' */ '/Users/xwl/Desktop/order/cr-mobile/src/pages/scale/quick/model.js').then(
+                  m => {
+                    return { namespace: 'model', ...m.default };
+                  },
+                ),
+              ],
+              component: () =>
+                import(/* webpackChunkName: "p__scale__quick" */ '../scale/quick'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../scale/quick').default,
+        exact: true,
+        _title: '甜鼠健康',
+        _title_default: '甜鼠健康',
+      },
+      {
+        path: '/scale/record',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              app: require('@tmp/dva').getApp(),
+              models: () => [
+                import(/* webpackChunkName: 'p__scale__record__model.js' */ '/Users/xwl/Desktop/order/cr-mobile/src/pages/scale/record/model.js').then(
+                  m => {
+                    return { namespace: 'model', ...m.default };
+                  },
+                ),
+              ],
+              component: () =>
+                import(/* webpackChunkName: "p__scale__record" */ '../scale/record'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../scale/record').default,
+        exact: true,
+        _title: '甜鼠健康',
+        _title_default: '甜鼠健康',
+      },
+      {
+        path: '/scale/compose/answer',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              app: require('@tmp/dva').getApp(),
+              models: () => [
+                import(/* webpackChunkName: 'p__scale__compose__answer__model.js' */ '/Users/xwl/Desktop/order/cr-mobile/src/pages/scale/compose/answer/model.js').then(
+                  m => {
+                    return { namespace: 'model', ...m.default };
+                  },
+                ),
+              ],
+              component: () =>
+                import(/* webpackChunkName: "p__scale__compose__answer" */ '../scale/compose/answer'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../scale/compose/answer').default,
+        exact: true,
+        _title: '甜鼠健康',
+        _title_default: '甜鼠健康',
+      },
+      {
+        path: '/scale/compose/answer/single',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              app: require('@tmp/dva').getApp(),
+              models: () => [
+                import(/* webpackChunkName: 'p__scale__compose__answer__single__model.js' */ '/Users/xwl/Desktop/order/cr-mobile/src/pages/scale/compose/answer/single/model.js').then(
+                  m => {
+                    return { namespace: 'model', ...m.default };
+                  },
+                ),
+                import(/* webpackChunkName: 'p__scale__compose__answer__model.js' */ '/Users/xwl/Desktop/order/cr-mobile/src/pages/scale/compose/answer/model.js').then(
+                  m => {
+                    return { namespace: 'model', ...m.default };
+                  },
+                ),
+              ],
+              component: () =>
+                import(/* webpackChunkName: "p__scale__compose__answer__single" */ '../scale/compose/answer/single'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../scale/compose/answer/single').default,
+        exact: true,
+        _title: '甜鼠健康',
+        _title_default: '甜鼠健康',
+      },
+      {
+        path: '/scale/compose/report',
+        component: __IS_BROWSER
+          ? _dvaDynamic({
+              app: require('@tmp/dva').getApp(),
+              models: () => [
+                import(/* webpackChunkName: 'p__scale__compose__report__model.js' */ '/Users/xwl/Desktop/order/cr-mobile/src/pages/scale/compose/report/model.js').then(
+                  m => {
+                    return { namespace: 'model', ...m.default };
+                  },
+                ),
+              ],
+              component: () =>
+                import(/* webpackChunkName: "p__scale__compose__report" */ '../scale/compose/report'),
+              LoadingComponent: require('/Users/xwl/Desktop/order/cr-mobile/src/components/PageLoading/index')
+                .default,
+            })
+          : require('../scale/compose/report').default,
+        exact: true,
+        _title: '甜鼠健康',
         _title_default: '甜鼠健康',
       },
       {

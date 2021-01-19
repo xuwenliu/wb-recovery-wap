@@ -39,4 +39,10 @@ export async function getServiceUserInfo() {
   return request('/api/mp/user/info');
 }
 
-
+//扫码完成后调用
+export async function scanSync(data) {
+  return request('/api/mp/scan/sync', {
+    method: 'POST',
+    data,
+  });
+}

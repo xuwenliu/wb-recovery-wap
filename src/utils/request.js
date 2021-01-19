@@ -3,9 +3,11 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { notification, message } from 'antd';
+import { Toast } from 'antd-mobile';
 import { router } from 'umi';
 import { stringify } from 'qs';
+import { getAuthUrl } from '@/services/api.tsx';
+
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -35,20 +37,9 @@ const errorHandler = error => {
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
-    notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
-    });
+    Toast.info(errorText);
   } else if (!response) {
-    notification.error({
-      description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
-    });
-    /**
-    router.replace({
-      pathname: `/user/login`,
-    });
-     */
+    Toast.info('网络异常');
   }
 
   return response;
@@ -83,7 +74,16 @@ request.interceptors.request.use(async (url, options) => {
     }
   }
   // 请求头添加token
-  const token = localStorage.getItem('openId'); // 移动端用 openId作为token
+  let token = localStorage.getItem('openId'); // 移动端用 openId作为token
+
+  if (
+    url.startsWith('/api/scale/') ||
+    url.startsWith('/api/object') ||
+    url.startsWith('/api/open/token')
+  ) {
+    token = localStorage.getItem('token');
+  }
+
   let headers = {};
   if (options.headers) {
     headers = { ...options.headers };
@@ -116,15 +116,19 @@ request.interceptors.response.use(async (response, options) => {
     result = res.data ? res.data : res;
   } else {
     // 界面报错处理
-    notification.error({
-      message: res.status,
-      description: res.msg,
-    });
-    if (res.status === 403) {
-      // token 过期
-      localStorage.removeItem('token');
+    Toast.info(res.msg);
+    // 401 需要绑定手机号
+    if (res.status === 401) {
       router.replace({
         pathname: `/user/login`,
+      });
+    }
+    // 403 公众号未授权
+    if (res.status === 403) {
+      localStorage.removeItem('openId');
+      localStorage.removeItem('userInfo');
+      getAuthUrl().then(res => {
+        location.href = res;
       });
     }
   }

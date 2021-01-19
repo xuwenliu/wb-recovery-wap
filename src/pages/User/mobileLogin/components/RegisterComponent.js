@@ -10,6 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { sendSms, bindMobile } from '@/services/api';
 import { getToken, removeToken } from '@/utils/authority';
 import router from 'umi/router';
+import { Toast } from 'antd-mobile';
 
 const displayText = '发送验证码';
 const useStyles = makeStyles(theme => ({
@@ -59,16 +60,19 @@ function Page(props) {
   };
 
   const onSms = () => {
-    form.validateFields(['mobile'], error => {
+    form.validateFields(['mobile'], async error => {
       if (!error) {
         const mobile = form
           .getFieldValue('mobile')
           .trim()
           .replace(/\s/g, '');
-        console.log('验证码已发送');
-        sendSms({ mobile, openId: token.openId });
+
         disableSendSms();
         setDisableButton(true);
+        const res = await sendSms({ mobile, openId: token.openId });
+        if (res) {
+          Toast.success('验证码发送成功');
+        }
       }
     });
   };
@@ -86,6 +90,14 @@ function Page(props) {
         const values = form.getFieldsValue();
         bindMobile({ ...values, openId: token.openId }).then(res => {
           if (res) {
+            localStorage.setItem(
+              'userInfo',
+              JSON.stringify({
+                ...token,
+                isNeedBind: false,
+                mobile: values.mobile,
+              })
+            );
             router.push('/home/index');
           }
         });

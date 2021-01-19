@@ -6,7 +6,7 @@ export default {
   },
   company: {
     copyright: '渝ICP备19006598号 Power by TS-Health',
-    name: '儿童康复系统',
+    name: '特殊儿童康复定点机构管理系统',
   },
   route: {
     /**

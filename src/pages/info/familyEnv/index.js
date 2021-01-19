@@ -26,18 +26,11 @@ const familyEnv = props => {
 
   const queryPatientGrowInfo = async () => {
     const values = await getPatientGrowInfo({ patientId });
-    const setValues = {
-      communityType: values.communityType ? [values.communityType] : null,
-      economicType: values.economicType ? [values.economicType] : null,
-      educationType: values.educationType ? [values.educationType] : null,
-      familyType: values.familyType ? [values.familyType] : null,
-      hukouType: values.hukouType ? [values.hukouType] : null,
-      languageType: values.languageType ? [values.languageType] : null,
-      mainCarefulId: values.mainCarefulId ? [values.mainCarefulId] : null,
-      medicalInsuranceType: values.medicalInsuranceType ? [values.medicalInsuranceType] : null,
-      patientId,
-    };
-    setFieldsValue(setValues);
+    if (!values) return;
+    for (let i in values) {
+      values[i] = values[i] ? [values[i]] : null;
+    }
+    setFieldsValue(values);
   };
 
   // 获取下拉信息
@@ -67,21 +60,30 @@ const familyEnv = props => {
 
   const onFinish = () => {
     validateFields(async (error, values) => {
+      // 验证错误处理
+      const errorObj = getFieldsError();
+      let errors = Object.values(errorObj).filter(item => item);
+      let errorsName = [];
+      errors.forEach(item => {
+        item.forEach(sub => {
+          errorsName.push(sub);
+        });
+      });
+      if (errorsName.length > 0) {
+        Toast.info(errorsName[0]);
+        return;
+      }
+      for (let i in values) {
+        values[i] = values[i] ? values[i][0] : null;
+      }
       const postData = {
-        communityType: values.communityType ? values.communityType[0] : null,
-        economicType: values.economicType ? values.economicType[0] : null,
-        educationType: values.educationType ? values.educationType[0] : null,
-        familyType: values.familyType ? values.familyType[0] : null,
-        hukouType: values.hukouType ? values.hukouType[0] : null,
-        languageType: values.languageType ? values.languageType[0] : null,
-        mainCarefulId: values.mainCarefulId ? values.mainCarefulId[0] : null,
-        medicalInsuranceType: values.medicalInsuranceType ? values.medicalInsuranceType[0] : null,
+        ...values,
         patientId,
       };
       const res = await savePatientGrowInfo(postData);
       if (res) {
         Toast.success('操作成功');
-        queryPatientGrowInfo();
+        router.goBack();
       }
     });
   };
@@ -114,11 +116,10 @@ const familyEnv = props => {
           />
         }
       >
-        儿童康复系统
+        成长环境
       </NavBar>
       <div className={styles.outside}>
-        <div className={styles.title}>成长环境</div>
-        <List className={`${styles.list} picker-list`}>
+        <List className="picker-list">
           <Picker
             data={mainList}
             cols={1}
@@ -127,7 +128,9 @@ const familyEnv = props => {
             })}
             onDismiss={() => onDismiss('mainCarefulId')}
           >
-            <List.Item arrow="horizontal">主要照顾者</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>主要照顾者
+            </List.Item>
           </Picker>
 
           <Picker
@@ -138,7 +141,9 @@ const familyEnv = props => {
             })}
             onDismiss={() => onDismiss('familyType')}
           >
-            <List.Item arrow="horizontal">家庭模式</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>家庭模式
+            </List.Item>
           </Picker>
 
           <Picker
@@ -149,7 +154,9 @@ const familyEnv = props => {
             })}
             onDismiss={() => onDismiss('communityType')}
           >
-            <List.Item arrow="horizontal">居住社区</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>居住社区
+            </List.Item>
           </Picker>
 
           <Picker
@@ -160,7 +167,9 @@ const familyEnv = props => {
             })}
             onDismiss={() => onDismiss('educationType')}
           >
-            <List.Item arrow="horizontal">教养方式</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>教养方式
+            </List.Item>
           </Picker>
 
           <Picker
@@ -171,7 +180,9 @@ const familyEnv = props => {
             })}
             onDismiss={() => onDismiss('languageType')}
           >
-            <List.Item arrow="horizontal">语言环境</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>语言环境
+            </List.Item>
           </Picker>
 
           <Picker
@@ -182,7 +193,9 @@ const familyEnv = props => {
             })}
             onDismiss={() => onDismiss('economicType')}
           >
-            <List.Item arrow="horizontal">家庭经济状况</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>家庭经济状况
+            </List.Item>
           </Picker>
 
           <Picker
@@ -193,7 +206,9 @@ const familyEnv = props => {
             })}
             onDismiss={() => onDismiss('hukouType')}
           >
-            <List.Item arrow="horizontal">户口类别</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>户口类别
+            </List.Item>
           </Picker>
 
           <Picker
@@ -204,7 +219,9 @@ const familyEnv = props => {
             })}
             onDismiss={() => onDismiss('medicalInsuranceType')}
           >
-            <List.Item arrow="horizontal">享受医疗保险情况</List.Item>
+            <List.Item arrow="horizontal">
+              <span className="must">*</span>享受医疗保险情况
+            </List.Item>
           </Picker>
         </List>
         <Button style={{ marginTop: 20, color: '#fff' }} type="primary" onClick={onFinish}>

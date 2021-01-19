@@ -42,6 +42,16 @@ export default [
         title: '查看目标',
       },
       {
+        path: '/home/punchCard',
+        component: './punchCard/index',
+        title: '训练打卡',
+      },
+      {
+        path: '/home/punchCard/list',
+        component: './punchCard/list/index',
+        title: '打卡记录',
+      },
+      {
         path: '/home/video',
         component: './video/index',
         title: '视频播放',
@@ -50,6 +60,16 @@ export default [
         path: '/home/courseScheduling',
         component: './courseScheduling/index',
         title: '查看排课',
+      },
+      {
+        path: '/home/visitingRecord',
+        component: './visitingRecord/index',
+        title: '就诊记录',
+      },
+      {
+        path: '/home/chart',
+        component: './chart/index',
+        title: '体格检查曲线图',
       },
     ],
   },
@@ -94,6 +114,39 @@ export default [
       },
     ],
   },
+  // scale start
+  {
+    path: '/scale',
+    Routes: ['src/pages/ScaleAuthorized'],
+    component: '../layouts/BasicLayout',
+    routes: [
+      {
+        path: '/scale',
+        redirect: '/scale/quick',
+      },
+      {
+        path: '/scale/quick',
+        component: './scale/quick',
+      },
+      {
+        path: '/scale/record',
+        component: './scale/record',
+      },
+      {
+        path: '/scale/compose/answer',
+        component: './scale/compose/answer',
+      },
+      {
+        path: '/scale/compose/answer/single',
+        component: './scale/compose/answer/single',
+      },
+      {
+        path: '/scale/compose/report',
+        component: './scale/compose/report',
+      },
+    ],
+  },
+  // scale end
   {
     path: '/',
     component: '../layouts/BasicLayout',
